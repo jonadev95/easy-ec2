@@ -17,6 +17,7 @@ func Run(svc *ec2.EC2, ImageId *string, count int, keyPair *string, instanceType
 			{
 				AssociatePublicIpAddress: aws.Bool(true),
 				DeleteOnTermination: aws.Bool(true),
+				DeviceIndex: aws.Int64(0),
 			},
 		},
 	}

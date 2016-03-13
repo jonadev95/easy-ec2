@@ -11,6 +11,7 @@ func Ls(svc *ec2.EC2){
 	if err != nil{
 		panic(err)
 	}
+	fmt.Println(resp)
 	fmt.Printf("|%-20s|%-20s|%-20s|%-20s|%-20s|%-50s|\n","Instance ID","Instance Type","Key Name","Launch Time","State","Public DNS")
 	dash := "-"
 	dashes := formatting.GetMultipleStrings(20, &dash)
@@ -21,7 +22,7 @@ func Ls(svc *ec2.EC2){
 			t:= fmt.Sprintf("%d:%d:%d %d-%d-%d",
 inst.LaunchTime.Hour(),inst.LaunchTime.Minute(), inst.LaunchTime.Second(), inst.LaunchTime.Day(), inst.LaunchTime.Month(), inst.LaunchTime.Year())
 			fmt.Printf("|%-20s|%-20s|%-20s|%-20s|%-20s|%-50s|\n",
-*inst.InstanceId, *inst.InstanceType, *inst.KeyName, t,*inst.State.Name,*inst.PublicDnsName)
+*inst.InstanceId, *inst.InstanceType, *inst.KeyName,t,*inst.State.Name,*inst.PublicDnsName)
 		}
 	}
 }
