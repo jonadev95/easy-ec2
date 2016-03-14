@@ -11,6 +11,7 @@ func Ls(svc *ec2.EC2){
 	if err != nil{
 		panic(err)
 	}
+	fmt.Println(resp)
 	fmt.Printf("|%-20s|%-20s|%-20s|%-20s|%-20s|%-50s|\n","Instance ID","Instance Type","Key Name","Launch Time","State","Public DNS")
 	dash := "-"
 	dashes := formatting.GetMultipleStrings(20, &dash)
