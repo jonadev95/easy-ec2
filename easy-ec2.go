@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"fmt"
 	"os"
+	"github.com/jonadev95/easy-ec2/images"
 )
 
 var(
@@ -16,41 +17,65 @@ var(
 	ls = app.Command("ls","List all instances")
 
 	rm = app.Command("rm","Remove instances(s)")
-	rm_instanceIds = rm.Arg("instance-id","Id of the instance which should be terminated").Required().Strings()
+	rm_instanceIds = rm.Arg("instance-id","Ids of the instance which should be terminated").Required().Strings()
 
-	images = app.Command("images","List Available Images")
+	listImages = app.Command("images","List Available Images")
 	inspect = app.Command("inspect","Show details of an instance")
 
 	run = app.Command("run", "Run new Instance(s)")
-	run_imageid	= run.Flag("image-id","The Amazon AMI ID").Required().String()
+	run_image	= run.Flag("image","An Alias of an Image (provided by the image command) or the Amazon AMI ID").Required().String()
 	run_count	= run.Flag("count","Specify How Many Instances should be created").Default("1").Int()
 	run_keypair	= run.Flag("key-pair","Specify which key pair should be used").Required().String()
-	run_instanceType= run.Flag("instance-type","Specify Which Instance Type should be used").Required().String() 
+	run_instanceType= run.Flag("instance-type","Specify Which Instance Type should be used").Default("t2.micro").String() 
 
-	start = app.Command("start", "Start a stopped instance")
-	stop = app.Command("stop","Stop a running instance")
+	start = app.Command("start", "Start instance(s)")
+	start_instanceIds= start.Arg("instance-id","Ids of the instance which should be started").Required().Strings()
+
+	stop = app.Command("stop","Stop instance(s)")
+	stop_instanceIds = stop.Arg("instance-id","Ids of the instance which should be started").Required().Strings()
+
 	configure = app.Command("configure","Set credentials and availability zone")
 
 
 )
 
 func main() {
-	fmt.Print("")
 	kingpin.CommandLine.HelpFlag.Short('h')
 	svc := ec2.New(session.New(), &aws.Config{Region: aws.String("eu-west-1")})
 	switch kingpin.MustParse(app.Parse(os.Args[1:])){
+
 		case ls.FullCommand():
 			instances.Ls(svc)
+
 		case rm.FullCommand():
 			Ids := make([]*string, 0)
 			for _, instanceId := range *rm_instanceIds {
 				Ids = append(Ids, aws.String(instanceId))
 			}
 			instances.Rm(svc, Ids)
+
 		case run.FullCommand():
-			fmt.Printf("Image ID: %s Count: %d KeyPair: %s instanceType: %s\n",*run_imageid, *run_count, *run_keypair, *run_instanceType)
-		instances.Run(svc, run_imageid, *run_count, run_keypair, run_instanceType)
+			imageId := images.GetImageId(run_image)
+			if len(*imageId)==0{
+				imageId=run_image
+			}
+			fmt.Printf("Image ID: %s Count: %d KeyPair: %s instanceType: %s\n",*imageId, *run_count, *run_keypair, *run_instanceType)
+			instances.Run(svc, imageId, *run_count, run_keypair, run_instanceType)
 
+		case start.FullCommand():
+			Ids := make([]*string,0)
+			for _, instanceId := range *start_instanceIds {
+				Ids = append(Ids, aws.String(instanceId))
+			}
+			instances.Start(svc, Ids)
 
+		case stop.FullCommand():
+			Ids := make([]*string,0)
+			for _, instanceId :=  range *stop_instanceIds {
+				Ids = append(Ids, aws.String(instanceId))
+			}
+			instances.Stop(svc, Ids)
+		case listImages.FullCommand():
+			images.Print()
 	}
 }

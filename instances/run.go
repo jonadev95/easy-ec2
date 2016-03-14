@@ -8,6 +8,7 @@ import(
 
 func Run(svc *ec2.EC2, ImageId *string, count int, keyPair *string, instanceType *string) {
 	c := int64(count)
+
 	params := &ec2.RunInstancesInput{
 		ImageId: ImageId,
 		MaxCount: &c,
@@ -28,5 +29,18 @@ func Run(svc *ec2.EC2, ImageId *string, count int, keyPair *string, instanceType
 		fmt.Println(err.Error())
 		return
 	}
-	fmt.Println(resp)
+
+	collection := new(EC2InstanceCollection)
+	for _, inst := range resp.Instances {
+		instance := new(EC2Instance)
+                instance.LaunchTime=inst.LaunchTime
+                instance.InstanceId=inst.InstanceId
+                instance.InstanceType=inst.InstanceType
+                instance.KeyName=inst.KeyName
+                instance.State=inst.State.Name
+                instance.PublicDns=inst.PublicDnsName
+                collection.Add(instance)
+
+	}
+	collection.Print()
 }
