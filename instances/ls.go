@@ -18,10 +18,14 @@ func Ls(svc *ec2.EC2){
 	fmt.Printf("|%s|%s|%s|%s|%s|%s|\n",dashes,dashes,dashes,dashes,dashes,moreDashes)
 	for idx, _ := range resp.Reservations {
 		for _, inst :=  range resp.Reservations[idx].Instances {
+			keyName := ""
+			if inst.KeyName != nil {
+				keyName = *inst.KeyName
+			}
 			t:= fmt.Sprintf("%d:%d:%d %d-%d-%d",
 inst.LaunchTime.Hour(),inst.LaunchTime.Minute(), inst.LaunchTime.Second(), inst.LaunchTime.Day(), inst.LaunchTime.Month(), inst.LaunchTime.Year())
 			fmt.Printf("|%-20s|%-20s|%-20s|%-20s|%-20s|%-50s|\n",
-*inst.InstanceId, *inst.InstanceType, *inst.KeyName, t,*inst.State.Name,*inst.PublicDnsName)
+*inst.InstanceId, *inst.InstanceType, keyName,t,*inst.State.Name,*inst.PublicDnsName)
 		}
 	}
 }
