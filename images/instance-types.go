@@ -6,17 +6,7 @@ import(
 	"strings"
 )
 
-type Image struct{
-	Alias string
-	Description string
-	AMI_Id string
-}
-
-type ImageCollection struct{
-	Images []Image
-}
-
-func Print(){
+func Printdummy(){
 	col := GetImages()
 	fmt.Printf("THIS LIST IS STATIC AND PROVIDED BY THE DEVELOPER, IT COULD BE OUTDATED\n\n")
         fmt.Printf("|%-30s|%-15s|%-80s|\n","Alias","AMI ID","Description")
@@ -32,7 +22,7 @@ func Print(){
 	}
 }
 
-func GetImageId(alias *string) *string{
+func GetImageIddummy(alias *string) *string{
 	col := GetImages()
 	for _, inst := range col.Images{
 		if strings.EqualFold(*alias,inst.Alias){
@@ -43,22 +33,7 @@ func GetImageId(alias *string) *string{
 	return &dummy
 }
 
-func Json(){
-	col := GetImages()
-	fmt.Println("{\"Images\":[")
-	count:=0
-	for i,inst := range col.Images{
-		fmt.Printf("{\"Name\":\"%s\",\"Alias\":\"%s\",\"Id\":\"%s\"}",inst.Description,inst.Alias,inst.AMI_Id)
-		if i != len(col.Images)-1{
-			fmt.Print(",")
-		}
-		fmt.Println("")
-		count++
-	}
-	fmt.Println("]}")
-}
-
-func GetImages() *ImageCollection{
+func GetImagesdummy() *ImageCollection{
 	imageCol := new(ImageCollection)
 	arr := imageCol.Images
 	arr = append(arr, Image{"amazon","Amazon Linux AMI 2015.09.2 (HVM)","ami-e1398992"})

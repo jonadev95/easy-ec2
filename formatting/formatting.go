@@ -12,6 +12,10 @@ func GetMultipleStrings(count int, targetString *string) string {
 	return buffer.String()
 }
 
-func cutAt(count int, targetString *string)string{
-	return (*targetString)[:count]
+func CutAt(targetString *string, count int)*string{
+	if len(*targetString)<count{
+		return targetString
+	}
+	ret := (*targetString)[:count]
+	return &ret
 }

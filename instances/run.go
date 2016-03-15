@@ -21,6 +21,7 @@ func Run(svc *ec2.EC2, ImageId *string, count int, keyPair *string, instanceType
 				DeviceIndex: aws.Int64(0),
 			},
 		},
+		KeyName: keyPair,
 	}
 
 	resp,err := svc.RunInstances(params)
